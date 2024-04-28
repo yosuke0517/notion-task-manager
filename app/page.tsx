@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Metadata } from 'next'
+import PageList from '@/app/components/page-list'
 
 export const metadata: Metadata = {
   title: 'hoge',
@@ -15,7 +16,10 @@ export default function Home() {
 
   return (
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-      <a href={notionUrl}>Add to Notion</a>
+      <div>
+        <a href={notionUrl}>Add to Notion</a>
+        <PageList />
+      </div>
     </main>
   )
 }
