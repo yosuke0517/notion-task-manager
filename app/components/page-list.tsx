@@ -9,7 +9,6 @@ async function fetchNotes() {
       apikey: process.env.SUPABASE_API_KEY as string,
     }),
     cache: 'no-store',
-    //next: { revalidate: 10 },
   })
   if (!res.ok) {
     throw new Error('Failed to fetch data in server')

@@ -15,7 +15,7 @@ export default function Home() {
   const notionUrl = `${authUrl}?client_id=${clientId}&response_type=code&owner=user&redirect_uri=${redirectUri}`
 
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
+    <main className='flex flex-col items-center justify-between p-24'>
       <div>
         <a href={notionUrl}>Add to Notion</a>
         <PageList />
