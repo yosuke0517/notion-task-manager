@@ -1,9 +1,12 @@
 import Image from 'next/image'
 import { Metadata } from 'next'
 import PageList from '@/app/components/page-list'
+import { Suspense } from 'react'
+import Spinner from '@/app/components/spinner'
+import RefreshBtn from '@/app/components/refresh-button'
 
 export const metadata: Metadata = {
-  title: 'hoge',
+  title: 'notion-task-manager',
   description: 'hoge fuga',
 }
 
@@ -18,7 +21,10 @@ export default function Home() {
     <main className='flex flex-col items-center justify-between p-24'>
       <div>
         <a href={notionUrl}>Add to Notion</a>
-        <PageList />
+        <Suspense fallback={<Spinner color='border-green-500' />}>
+          <PageList />
+        </Suspense>
+        <RefreshBtn />
       </div>
     </main>
   )
