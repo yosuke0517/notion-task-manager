@@ -17,20 +17,23 @@ export default function Auth() {
         email,
         password,
       })
-      setEmail('')
-      setPassword('')
+
       if (error) {
         alert(error.message)
-      } else {
-        router.push('/auth/todo-crud')
+        return
       }
-    } else {
+
+      resetAuthState()
+      router.push('/')
+    }
+
+    if (!isLogin) {
       const { error } = await supabase.auth.signUp({
         email,
         password,
       })
-      setEmail('')
-      setPassword('')
+      resetAuthState()
+
       if (error) {
         alert(error.message)
       }
@@ -39,10 +42,15 @@ export default function Auth() {
   function signOut() {
     supabase.auth.signOut()
   }
+
+  const resetAuthState = () => {
+    setEmail('')
+    setPassword('')
+  }
   return (
     <div className='flex flex-col items-center justify-center'>
       <p>{loginUser.email}</p>
-      <button className='my-6 h-6 w-6 cursor-pointer text-blue-500' onClick={signOut}>
+      <button className='my-6 h-6 cursor-pointer text-blue-500' onClick={signOut}>
         ログアウト
       </button>
       <form onSubmit={handleSubmit}>
