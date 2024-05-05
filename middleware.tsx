@@ -8,7 +8,6 @@ export async function middleware(req: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession()
-  console.log(req.nextUrl)
   /** NOTE: faviconとか静的アセットも入ってきてしまうので、個別でパスだけ設定する必要がある
    * ここでリダイレクトを設定すると、faviconとかのリクエストもリダイレクトされて、cssが効かなかったりする
    * 他に方法ありそうだけど、とりあえずこれで。

@@ -1,4 +1,8 @@
-async function fetchSelectedPageData(code: string) {
+import { createServerComponentSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import type { Database } from '@/database.types'
+import { cookies, headers } from 'next/headers'
+
+async function postNotionAuth(code: string) {
   const clientId = process.env.NOTION_OAUTH_CLIENT_ID
   const clientSecret = process.env.NOTION_OAUTH_CLIENT_SECRET
   const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI || 'http://localhost:3000/notion-list'
@@ -25,13 +29,44 @@ async function fetchSelectedPageData(code: string) {
     return null
   }
 
-  // const data = await response.json() // Parse the JSON from the response
-  // console.log('Response data:', data)
+  const data = await response.json()
+
+  await setNotionAccessToken(data.access_token, data.workspace_id)
 
   return null
 }
+
+const setNotionAccessToken = async (token: string, workspaceId: string) => {
+  const supabase = createServerComponentSupabaseClient<Database>({
+    headers,
+    cookies,
+  })
+  // サーバに保存されているセッション情報を取得
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  if (!session) {
+    alert('ログインしてください')
+    return
+  }
+
+  let { data: tokens, error } = await supabase.from('tokens').select('access_token')
+  // トークンがすでに登録されている場合は何もしない（リロードなど）
+  if (tokens && tokens?.length > 0) {
+    return
+  }
+
+  const { data, error: insertError } = await supabase
+    .from('tokens')
+    .insert([{ access_token: token, workspace_id: workspaceId, user_id: session?.user.id }])
+    .select()
+
+  if (insertError) {
+    console.error('Failed to insert:', insertError)
+  }
+}
 export default function NotionList({ searchParams }: { searchParams: { code: string } }) {
-  const notionData = fetchSelectedPageData(searchParams.code)
+  const notionData = postNotionAuth(searchParams.code)
 
   return (
     <div>
