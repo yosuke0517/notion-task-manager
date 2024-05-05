@@ -32,8 +32,30 @@ async function postNotionAuth(code: string) {
   const data = await response.json()
 
   await setNotionAccessToken(data.access_token, data.workspace_id)
+  return await searchNotionPages(data.access_token)
+}
 
-  return null
+async function searchNotionPages(token: string) {
+  try {
+    const res = await fetch('https://api.notion.com/v1/search', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Notion-Version': '2022-06-28',
+      },
+    })
+
+    if (!res.ok) {
+      console.error('Failed to fetch:', res.statusText, res.status)
+      return null
+    }
+
+    return await res.json()
+  } catch (error) {
+    console.error('Failed to fetch:', error)
+  }
 }
 
 const setNotionAccessToken = async (token: string, workspaceId: string) => {
@@ -65,8 +87,8 @@ const setNotionAccessToken = async (token: string, workspaceId: string) => {
     console.error('Failed to insert:', insertError)
   }
 }
-export default function NotionList({ searchParams }: { searchParams: { code: string } }) {
-  const notionData = postNotionAuth(searchParams.code)
+export default async function NotionList({ searchParams }: { searchParams: { code: string } }) {
+  const notionData = await postNotionAuth(searchParams.code)
 
   return (
     <div>
@@ -74,7 +96,7 @@ export default function NotionList({ searchParams }: { searchParams: { code: str
         <div>未設定</div>
       ) : (
         <div>
-          <p>TODO 設定されているページを表示</p>
+          <p>{JSON.stringify(notionData)}</p>
         </div>
       )}
     </div>
