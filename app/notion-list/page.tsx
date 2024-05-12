@@ -1,6 +1,7 @@
 import { createServerComponentSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/database.types'
 import { cookies, headers } from 'next/headers'
+import { camelizeKeys } from 'humps'
 
 async function postNotionAuth(code: string) {
   const clientId = process.env.NOTION_OAUTH_CLIENT_ID
@@ -52,7 +53,8 @@ async function searchNotionPages(token: string) {
       return null
     }
 
-    return await res.json()
+    const jsonData = await res.json()
+    return camelizeKeys(jsonData)
   } catch (error) {
     console.error('Failed to fetch:', error)
   }
@@ -91,7 +93,7 @@ export default async function NotionList({ searchParams }: { searchParams: { cod
   const notionData = await postNotionAuth(searchParams.code)
 
   return (
-    <div>
+    <main className='p-2'>
       {notionData === null ? (
         <div>未設定</div>
       ) : (
@@ -99,6 +101,6 @@ export default async function NotionList({ searchParams }: { searchParams: { cod
           <p>{JSON.stringify(notionData)}</p>
         </div>
       )}
-    </div>
+    </main>
   )
 }

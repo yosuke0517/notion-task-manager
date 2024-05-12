@@ -6,8 +6,8 @@ import Spinner from '@/app/components/spinner'
 import RefreshBtn from '@/app/components/refresh-button'
 
 export const metadata: Metadata = {
-  title: 'notion-task-manager',
-  description: 'hoge fuga',
+  title: 'notion task manager',
+  description: 'notion task manager',
 }
 
 export default function Home() {
